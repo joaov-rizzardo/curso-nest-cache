@@ -15,12 +15,14 @@ import { AtualizaProdutoDTO } from './dto/AtualizaProduto.dto';
 import { CriaProdutoDTO } from './dto/CriaProduto.dto';
 import { ProdutoService } from './produto.service';
 import { Cache } from 'cache-manager';
+import { CustomLogger } from '../logger/custom-logger.service';
 
 @Controller('produtos')
 export class ProdutoController {
   constructor(
     private readonly produtoService: ProdutoService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private readonly logger: CustomLogger,
   ) {}
 
   @Post()
@@ -28,7 +30,7 @@ export class ProdutoController {
     const produtoCadastrado = await this.produtoService.criaProduto(
       dadosProduto,
     );
-
+    this.logger.logEmArquivo(produtoCadastrado);
     return {
       mensagem: 'Produto criado com sucesso.',
       produto: produtoCadastrado,
